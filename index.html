@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mediamatic Gallery</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; text-align: center; }
+        .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 20px; }
+        .card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .card img { width: 100%; border-radius: 4px; height: 200px; object-fit: cover; }
+        h2 { margin: 10px 0 0; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+    <h1>Mediamatic Experience Gallery</h1>
+    <div class="gallery" id="gallery">Loading photos...</div>
+
+    <script>
+        // Replace this with your "Publish to Web" CSV link from Google Sheets
+        const sheetUrl = 'YOUR_PUBLISHED_CSV_LINK_HERE';
+
+        async function loadGallery() {
+            const response = await fetch(sheetUrl);
+            const data = await response.text();
+            const rows = data.split('\n').slice(1); // Skip the header row
+            const container = document.getElementById('gallery');
+            container.innerHTML = '';
+
+            rows.forEach(row => {
+                const columns = row.split(','); 
+                // Adjust index [0] and [1] based on your sheet columns
+                const name = columns[0]; 
+                const imageUrl = columns[1]; 
+
+                if (imageUrl && imageUrl.includes('http')) {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <img src="${imageUrl.trim()}" alt="${name}">
+                        <h2>${name}</h2>
+                    `;
+                    container.appendChild(card);
+                }
+            });
+        }
+
+        loadGallery();
+    </script>
+</body>
+</html>
